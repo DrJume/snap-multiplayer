@@ -1,11 +1,13 @@
 const fs = require('fs')
 const https = require('https')
 const WebSocket = require('ws')
- 
+const express = require('express')
+
+const app = express()
 const server = new https.createServer({
   cert: fs.readFileSync('/etc/letsencrypt/live/snap.coffee-mill.net/fullchain.pem'),
   key: fs.readFileSync('/etc/letsencrypt/live/snap.coffee-mill.net/privkey.pem')
-})
+}, app)
 const wss = new WebSocket.Server({ server })
 
 wss.on('connection', function connection(ws, req) {
@@ -22,6 +24,10 @@ wss.on('connection', function connection(ws, req) {
       }
     })
   })
+})
+
+app.get('', (req, res) => {
+  res.download(__dirname + '/../SNAP_Multiplayer_Blocks.xml')
 })
 
 server.listen({
